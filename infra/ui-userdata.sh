@@ -2,23 +2,24 @@
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
-# ==== EDIT ====
+
 REPO_HTTPS="https://github.com/cash-cam/COSC349-A2.git"
-API_BASE_URL="http://<API_PRIVATE_IP>"   # fill after API launches
-# ==============
+# API's *private* IP or private DNS (no trailing slash) must be changed to match that of the EC2 private IP
+API_BASE_URL="http://10.0.29.102"   
+
 
 echo 'Acquire::ForceIPv4 "true";' | tee /etc/apt/apt.conf.d/99force-ipv4 >/dev/null
 apt-get update -y
-apt-get install -y apache2 php libapache2-mod-php git unzip
+apt-get install -y apache2 php libapache2-mod-php php-mysql php-curl git unzip
 
 rm -rf /tmp/COSC349-A2
 git clone "$REPO_HTTPS" /tmp/COSC349-A2
 
-# Only take the UI subtree
+# Deploy ONLY the UI subtree
 rsync -a --delete --exclude='.git/' /tmp/COSC349-A2/ui/ /var/www/html/
 chown -R www-data:www-data /var/www/html
 
-# vhost for UI (serves /var/www/html/www)
+# Apache vhost for UI
 cat >/etc/apache2/sites-available/ui.conf <<EOF
 <VirtualHost *:80>
   ServerName _
