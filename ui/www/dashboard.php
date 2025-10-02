@@ -40,7 +40,7 @@ $rows = ($status === 200 && is_array($data) && isset($data['grades']) && is_arra
     <div class="card">
       <div class="card-header">
         <h1>Grades for Student ID: <?= htmlspecialchars($student_id) ?></h1>
-        <div class="actions"><a href="/">&larr; Back</a></div>
+        <div class="actions"><a href="/">&larr; Logout</a></div>
       </div>
 
       <?php if ($status !== 200): ?>

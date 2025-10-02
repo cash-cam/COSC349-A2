@@ -15,6 +15,7 @@ require __DIR__ . '/config.php';
   .container {
     background: #ffffff;
     padding: 2rem 3rem;
+	margin-left: 4px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     text-align: center;
@@ -37,6 +38,14 @@ require __DIR__ . '/config.php';
     display: block;
   }
   input[name="student_id"] {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+    input[name="admin_id"] {
     width: 100%;
     padding: 0.5rem 0.75rem;
     border: 1px solid #ccc;
@@ -67,4 +76,10 @@ require __DIR__ . '/config.php';
       <button type="submit">View grades</button>
     </form>
   </div>
+  	  <div class="container">
+    <h1>Administrator Portal</h1>
+    <form method="get" action="dashboard.php">
+      <label>Admin ID: <input name="admin_id" required></label>
+      <button type="submit">Update Grades</button>
+    </form>
 </body></html>
