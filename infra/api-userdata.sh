@@ -47,7 +47,7 @@ a2dissite 000-default.conf >/dev/null 2>&1 || true
 a2ensite api.conf >/dev/null
 systemctl reload apache2
 
-# 
+# populate rds
 if [ -f /tmp/COSC349-A2/db/schema.sql ]; then 
   mysql -h "${RDS_ENDPOINT}" -u "${DB_USER}" "-p${DB_PASS}" "${DB_NAME}" < /tmp/COSC349-A2/db/schema.sql || true
 fi
