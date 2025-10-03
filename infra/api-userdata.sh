@@ -38,6 +38,7 @@ cat >/etc/apache2/sites-available/api.conf <<EOF
 <VirtualHost *:80>
   ServerName _
   DocumentRoot /var/www/html/public
+ 
   <Directory /var/www/html/public>
     Options FollowSymLinks
     AllowOverride All
@@ -92,3 +93,40 @@ try {
   echo json_encode(["php"=>"ok","db"=>"fail","error"=>$e->getMessage()]);
 }
 PHP
+
+# --- S3 backup prerequisites ---
+apt-get install -y awscli
+
+AWS_REGION="$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | grep region | awk -F\" '{print $4}')"
+S3_BUCKET="cosc349-a2-db-backups"     # Will need to be changed for redistribution
+S3_PREFIX="rds-dumps"                    # optional folder prefix in bucket
+
+# Backup script
+cat >/usr/local/bin/db-backup.sh <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+DB_HOST="${DB_HOST}"
+DB_NAME="${DB_NAME}"
+DB_USER="${DB_USER}"
+DB_PASS="${DB_PASS}"
+S3_BUCKET="cosc349-a2-db-backups"      # <-- keep in sync with user-data
+S3_PREFIX="rds-dumps"
+
+STAMP="$(date -u +%Y%m%d-%H%M%S)"
+OUT="/var/backups/${DB_NAME}-${STAMP}.sql.gz"
+
+mkdir -p /var/backups
+mysqldump -h "$DB_HOST" -u "$DB_USER" "-p${DB_PASS}" --single-transaction --routines --triggers "$DB_NAME" \
+  | gzip -9 > "$OUT"
+
+# Upload to S3: s3://bucket/prefix/dbname/2025/10/03/file.sql.gz
+aws s3 cp "$OUT" "s3://${S3_BUCKET}/${S3_PREFIX}/${DB_NAME}/$(date -u +%Y/%m/%d)/$(basename "$OUT")"
+
+# keep local backups tidy (e.g., last 3)
+ls -1t /var/backups/${DB_NAME}-*.sql.gz | tail -n +4 | xargs -r rm -f
+EOF
+chmod +x /usr/local/bin/db-backup.sh
+
+# Cron: run at 02:30 UTC nightly
+( crontab -l 2>/dev/null; echo "30 2 * * * /usr/local/bin/db-backup.sh >>/var/log/db-backup.log 2>&1" ) | crontab -
