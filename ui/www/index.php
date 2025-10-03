@@ -78,7 +78,7 @@ require __DIR__ . '/config.php';
   </div>
   	  <div class="container">
     <h1>Administrator Portal</h1>
-    <form method="get" action="dashboard.php">
+    <form method="get" action="admin/admindashboard.php">
       <label>Admin ID: <input name="admin_id" required></label>
       <button type="submit">Update Grades</button>
     </form>
