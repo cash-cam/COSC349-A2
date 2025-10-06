@@ -36,6 +36,7 @@ flowchart LR
 - Access to repo
 - Create a VPC that will have 3 Security Groups within it. One for each of the ui,api, and db with appropriate inbound and outbound rules (the above diagram can give context)
 
+
 1. Create RDS Instance 
 	- RDS Instance MySQL 8.0 (note the name you use for the instance I used 'studentdata')
 2. Launch API EC2
@@ -43,12 +44,24 @@ flowchart LR
 	- 
 	- Subnet: Private
 	- Attach API security group
-	- Paste contents of *infrastructure/api-userdata.sh* into User data field
+	- Paste contents of *infra/api-userdata.sh* into User data field
 	- Wait for bootstrapping to complete then note API private DNS
 
 3. 
 	- Type t3.micro (ubuntu)
-	- subnet: public
+	- Subnet: public
+	- Attach UI security group
+	- Update API_BASE_url in ui-userdata.sh with noted down API private IP.
+	- Paste contents of *infra/ui-userdata.sh* into User data field.
+	- Wait for bootstrap to compete.
+
+## Accessing System.
+- To access the UI EC2 via SSH (this will need to be a inboundrule in the UI security group) `SSH -i <KEY-PAIR> ubuntu@<public-ip-address>`
+- Access to the API EC2 is via the SSH of the UI EC2 `SSH -i <KEY-PAIR> ubuntu@<private-ip-address>`
+- To access the MySQL database the user will need to be connected the the API EC2 and then use something such as the following comamnd: `mysql -h <endpoint> -u <username> -p -e "
+  USE studentdata;
+  SELECT * FROM enrolments WHERE student_id='S0000003' AND paper_code='BSNS114';
+  " `
 
 
 
