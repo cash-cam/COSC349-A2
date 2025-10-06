@@ -42,7 +42,6 @@ flowchart LR
 	- RDS Instance MySQL 8.0 (note the name you use for the instance I used 'studentdata')
 2. Launch API EC2
 	- Type t3.micro (ubuntu)
-	- 
 	- Subnet: Private
 	- Attach API security group
 	- Paste contents of *infra/api-userdata.sh* into User data field
@@ -53,9 +52,8 @@ flowchart LR
 	- Type t3.micro (ubuntu)
 	- Subnet: public
 	- Attach UI security group
-	- 
 	- Paste contents of *infra/ui-userdata.sh* into User data field.
-			- changes needed: API_BASE_URL to API EC2 PRIVATE IP
+		- changes needed: API_BASE_URL to API EC2 PRIVATE IP
 	- Wait for bootstrap to compete.
 
 ## Accessing System.
@@ -65,6 +63,7 @@ flowchart LR
   USE studentdata;
   SELECT * FROM enrolments WHERE student_id='S0000003' AND paper_code='BSNS114';
   " `
+- To access the system via the internet look at the UI EC2 details and find amazon DNS link similar to this `ec2-XX-XXX-XX-XXX.compute-1.amazonaws.com`
 
 
 
