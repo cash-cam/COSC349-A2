@@ -1,33 +1,49 @@
-# Grade Tracker App for Studentes
-- Distributed solution for students to be able to see their grades.
-## structure
-- VM1: **Reverse Proxy** Students can view their grades in the course, assignment/exam results, Average student grade of the course 
-- VM2: **API** API service to connect the frontend to the database. Reads the endpoints
-- VM3: **Storage** Database that persists students, courses and grades. 
+# Student Grade Uploader and Checker
+## Overview
+This project deploys a student grade checker and administrator management web application entirely in the AWS cloud.
+The system uses a three-tier architecture:
+- UI EC2 instance — serves the front-end web interface (student & admin login).
+- API EC2 instance — handles data operations and connects to the database.
+- Amazon RDS (MySQL) — stores student, administrator, and grade data.
+- Amazon S3 Bucket — holds RDS logs and database backups.
 
-## Technical
-Vagrant Base: **bento/ubuntu 22.04**
-I suggest at least 5GB of storage for cloning this project locally.
-Open-source software used:
-PHP, Apache, MySQL, Vagrant, VirtualBox, Bento Ubuntu
+# Architecure 
+```mermaid
+flowchart LR
+  Internet((Internet)) --> UI[UI EC2<br/>Apache + PHP]
+  UI -- HTTP :80 --> API[API EC2<br/>Apache + PHP (Public/)]
+  API -- MySQL :3306 --> RDS[(Amazon RDS MySQL<br/>studentdata)]
 
-## How to run 
-Firstly clone or fork the repository.
-To run it is required that you have Vagrant [download here](https://developer.hashicorp.com/vagrant/install).
-A Type 2 Hypervisor is also required such as [VirtualBox](https://www.virtualbox.org/wiki/Downloads) or [VMWare](https://www.vmware.com/).
-Once the above downloads are complete use the below command within the repository.
-```bash
-vagrant up
-``` 
-To check that the prior worked
-```bash
-vagrant status
-``` 
-To access the VMs once running
-```bash
-vagrant ssh <vm-name>
+  RDS -. log exports .-> CW[CloudWatch Logs]
+  CW -. export to S3 .-> S3[(Amazon S3<br/>Logs & Backups)]
+
+  subgraph VPC [VPC 10.0.0.0/16]
+    direction LR
+    subgraph Public [Public Subnet]
+      UI
+    end
+    subgraph Private [Private Subnet]
+      API
+      RDS
+    end
+  end
 ```
 
-Ideally you should be able to visit [this page](http://127.0.0.1:8080/index.php), and be displayed the application.
-Test data is located in the schema.sql.
+## Deployment Order 
+*Required:*
+- AWS Account (This was created in the learner lab enviroment)
+- Key Pair saved (will need to create your own and save it somewhere safe)
+- Access to repo
+
+1. Create RDS Instance 
+	- RDS Instance MySQL 8.0 (note the name you use for the instance i used 'studentdata')
+2. Launch API EC2
+	- Type t3.micro (ubuntu)
+	- Subnet: Private
+	- Attach API security group
+	- 
+
+
+
+
 
