@@ -35,7 +35,7 @@ flowchart LR
 - Key Pair saved (will need to create your own and save it somewhere safe)
 - Access to repo
 - Create a VPC that will have 3 Security Groups within it
-- One for each of the ui,api, and db with appropriate inbound and outbound rules (the above diagram can give context) and relevant images for inbound rules have been attached in the repo `docs/`
+- One for each of the ui,api, and db with appropriate inbound and outbound rules (the above diagram can give context) and relevant images for inbound rules have been attached in the repo [docs](https://github.com/cash-cam/COSC349-A2/tree/main/docs)
 
 
 1. Create RDS Instance 
@@ -46,14 +46,16 @@ flowchart LR
 	- Subnet: Private
 	- Attach API security group
 	- Paste contents of *infra/api-userdata.sh* into User data field
+		- changes needed: The RDS endpoint, DB_name, DB_pass, and repo_https
 	- Wait for bootstrapping to complete then note API private DNS
 
 3. 
 	- Type t3.micro (ubuntu)
 	- Subnet: public
 	- Attach UI security group
-	- Update API_BASE_url in ui-userdata.sh with noted down API private IP.
+	- 
 	- Paste contents of *infra/ui-userdata.sh* into User data field.
+			- changes needed: API_BASE_URL to API EC2 PRIVATE IP
 	- Wait for bootstrap to compete.
 
 ## Accessing System.
