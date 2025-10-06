@@ -34,7 +34,8 @@ flowchart LR
 - AWS Account (This was created in the learner lab enviroment)
 - Key Pair saved (will need to create your own and save it somewhere safe)
 - Access to repo
-- Create a VPC that will have 3 Security Groups within it. One for each of the ui,api, and db with appropriate inbound and outbound rules (the above diagram can give context)
+- Create a VPC that will have 3 Security Groups within it
+- One for each of the ui,api, and db with appropriate inbound and outbound rules (the above diagram can give context) and relevant images for inbound rules have been attached in the repo `docs/`
 
 
 1. Create RDS Instance 
