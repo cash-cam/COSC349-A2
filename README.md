@@ -10,19 +10,19 @@ The system uses a three-tier architecture:
 # Architecure 
 ```mermaid
 flowchart LR
-  Internet((Internet)) --> UI[UI EC2<br/>Apache + PHP]
-  UI -- HTTP :80 --> API[API EC2<br/>Apache + PHP (Public/)]
-  API -- MySQL :3306 --> RDS[(Amazon RDS MySQL<br/>studentdata)]
+  Internet((Internet)) --> UI[UI EC2 - Apache + PHP]
+  UI -- "HTTP :80" --> API[API EC2 - Apache + PHP Public]
+  API -- "MySQL :3306" --> RDS[(Amazon RDS MySQL - studentdata)]
 
-  RDS -. log exports .-> CW[CloudWatch Logs]
-  CW -. export to S3 .-> S3[(Amazon S3<br/>Logs & Backups)]
+  RDS -. "Log exports" .-> CW[CloudWatch Logs]
+  CW -. "Export to S3" .-> S3[(Amazon S3 - Logs & Backups)]
 
-  subgraph VPC [VPC 10.0.0.0/16]
+  subgraph VPC ["VPC"]
     direction LR
-    subgraph Public [Public Subnet]
+    subgraph Public ["Public Subnet"]
       UI
     end
-    subgraph Private [Private Subnet]
+    subgraph Private ["Private Subnet"]
       API
       RDS
     end
@@ -34,14 +34,21 @@ flowchart LR
 - AWS Account (This was created in the learner lab enviroment)
 - Key Pair saved (will need to create your own and save it somewhere safe)
 - Access to repo
+- Create a VPC that will have 3 Security Groups within it. One for each of the ui,api, and db with appropriate inbound and outbound rules (the above diagram can give context)
 
 1. Create RDS Instance 
-	- RDS Instance MySQL 8.0 (note the name you use for the instance i used 'studentdata')
+	- RDS Instance MySQL 8.0 (note the name you use for the instance I used 'studentdata')
 2. Launch API EC2
 	- Type t3.micro (ubuntu)
+	- 
 	- Subnet: Private
 	- Attach API security group
-	- 
+	- Paste contents of *infrastructure/api-userdata.sh* into User data field
+	- Wait for bootstrapping to complete then note API private DNS
+
+3. 
+	- Type t3.micro (ubuntu)
+	- subnet: public
 
 
 
